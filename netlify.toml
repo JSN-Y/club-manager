@@ -1,0 +1,29 @@
+# ============================================================
+# Netlify deployment config for Club Manager (frontend only)
+# ============================================================
+#
+# How it works:
+#   - Netlify builds and serves the static React frontend
+#   - The backend (Express API) is hosted separately on Render
+#   - Set VITE_API_URL in Netlify's environment variables to your
+#     Render backend URL (e.g. https://club-manager-api.onrender.com)
+#
+# ============================================================
+
+[build]
+  # Run from the monorepo root
+  command = "npm install -g pnpm@9 --quiet && pnpm install --frozen-lockfile && pnpm run typecheck:libs && BASE_PATH=/ pnpm --filter @workspace/club-manager run build"
+  publish = "artifacts/club-manager/dist/public"
+
+[build.environment]
+  # Required by vite.config.ts – the app is served at the root on Netlify
+  BASE_PATH = "/"
+  NODE_VERSION = "20"
+  # VITE_API_URL must be added manually in Netlify → Site Settings → Environment Variables
+  # Example value: https://club-manager-api.onrender.com
+
+# SPA fallback – all routes serve index.html so wouter handles routing client-side
+[[redirects]]
+  from = "/*"
+  to   = "/index.html"
+  status = 200

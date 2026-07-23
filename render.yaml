@@ -1,0 +1,55 @@
+# ============================================================
+# Render deployment config for Club Manager (backend API)
+# ============================================================
+#
+# Deploy steps:
+#   1. Go to https://render.com → New → Web Service
+#   2. Connect your GitHub/GitLab repo
+#   3. Render auto-detects this file and pre-fills the settings
+#   4. Add the environment variables listed below in the Render dashboard
+#
+# Free tier note: The service sleeps after 15 min of inactivity.
+# The first request after sleep takes ~30 seconds to wake up.
+# This is normal on Render's free plan.
+#
+# ============================================================
+
+services:
+  - type: web
+    name: club-manager-api
+    runtime: node
+    plan: free
+
+    # Render uses the repo root as the working directory
+    buildCommand: >
+      npm install -g pnpm@9 --quiet &&
+      pnpm install --frozen-lockfile &&
+      pnpm --filter @workspace/api-server run build
+
+    startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Render provides PORT automatically – do not set it manually
+      # - key: PORT  ← injected by Render
+
+      # ── Secrets: add these in the Render dashboard ──────────
+      - key: SESSION_SECRET
+        sync: false   # set manually in Render dashboard
+
+      - key: SUPABASE_URL
+        sync: false
+
+      - key: SUPABASE_ANON_KEY
+        sync: false
+
+      - key: SUPABASE_DB_URL
+        sync: false
+
+      - key: GOOGLE_CLIENT_EMAIL
+        sync: false
+
+      - key: GOOGLE_PRIVATE_KEY
+        sync: false

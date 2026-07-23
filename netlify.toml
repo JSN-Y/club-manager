@@ -12,7 +12,7 @@
 
 [build]
   # Run from the monorepo root
-  command = "npm install -g pnpm@9 --quiet && pnpm install --frozen-lockfile && pnpm run typecheck:libs && BASE_PATH=/ pnpm --filter @workspace/club-manager run build"
+  command = "npx --yes pnpm@10 install --frozen-lockfile && npx pnpm@10 run typecheck:libs && BASE_PATH=/ npx pnpm@10 --filter @workspace/club-manager run build"
   publish = "artifacts/club-manager/dist/public"
 
 [build.environment]
